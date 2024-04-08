@@ -29,16 +29,16 @@ class MyProjectClass {
       quirks: ["Doomsday cult", "Are a slave state", "Post apocalyptic", "Eats children", "Has a deep crime underbelly", "National animal is a pidgeon", "At the will of the Great God Cthulu", "Sinister secretary secrety subverts status s-quo"],      
     };
     
-    const template = `$faction_surname $faction_name $faction_subname \n
-
-    Governing structure: $governing_structure\n
-    Inhabited by: $main_inhabitants\n
-    Economic Structure: $economic_structure\n
-    Opening Foreign Stance: $foreign_stance\n
-    Inhabitated by: $main_inhabitants\n\n
+    const template = `
+    $faction_surname $faction_name $faction_subname
+    
+    Governing structure: $governing_structure
+    Inhabited by: $main_inhabitants
+    Economic Structure: $economic_structure
+    Opening Foreign Stance: $foreign_stance
+    Inhabitated by: $main_inhabitants
 
     Extra Quirks: $quirks
-
     `;
     
     
