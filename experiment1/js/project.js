@@ -1,6 +1,6 @@
 // project.js - purpose and description here
-// Author: Your Name
-// Date:
+// Author: Jaxon Ruiz
+// Date: 4/7/24
 
 // NOTE: This is how we might start a basic JavaaScript OOP project
 
@@ -18,7 +18,59 @@ class MyProjectClass {
   
   // define a method
   myMethod() {
-    // code to run when method is called
+    const fillers = {
+      faction_surname: ["Kingdom of ", "The Peoples Faction of ", "The Nation of ", "The Hegemonic Collective of "],
+      faction_name: ["Ixtakia", "Novania", "Tri-Acticon", "Noxus", "Super Earth", "Piltover", "Eldia"],
+      faction_subname: [": of the Risen", ": Reborn", "", " Enterprise", " and Co", " Incorperated"],
+      governing_structure: ["Authoritarian", "Democratic", "Illiberal Democracy", "Egalitarian", "Republic", "Corperate", "Dictatorship", "Parlimentarian", "Communal", "Fascist"],
+      economic_structure: ["Agricultural", "Militaristic", "Plunder based", "Trade", "Socialist", "Laissez faire open economy", "Planned economy", "Capitalistic Hellscape"],
+      foreign_stance: ["Open", "Distrustful", "Militaristic", "Xenophobic", "Cooperative", "Exterminationist", "Friendly", "Domineering"],
+      main_inhabitants: ["Humans", "Robots", "Subterranian", "Anthropomorphic", "Alien", "Rat people", "Lizard people", "The undead", "Wizards"],
+      quirks: ["Doomsday cult", "Are a slave state", "Post apocalyptic", "Eats children", "Has a deep crime underbelly", "National animal is a pidgeon", "At the will of the Great God Cthulu", "Sinister secretary secrety subverts status s-quo"],      
+    };
+    
+    const template = `$faction_surname $faction_name $faction_subname \n
+
+    Governing structure: $governing_structure\n
+    Inhabited by: $main_inhabitants\n
+    Economic Structure: $economic_structure\n
+    Opening Foreign Stance: $foreign_stance\n
+    Inhabitated by: $main_inhabitants\n\n
+
+    Extra Quirks: $quirks
+
+    `;
+    
+    
+    // STUDENTS: You don't need to edit code below this line.
+    
+    const slotPattern = /\$(\w+)/;
+    
+    function replacer(match, name) {
+      let options = fillers[name];
+      if (options) {
+        return options[Math.floor(Math.random() * options.length)];
+      } else {
+        return `<UNKNOWN:${name}>`;
+      }
+    }
+    
+    function generate() {
+      let story = template;
+      while (story.match(slotPattern)) {
+        story = story.replace(slotPattern, replacer);
+      }
+    
+      /* global box */
+      //box.innerText = story; glitch.com line changed to jquery
+      $("#box").text(story);
+    }
+    
+    /* global clicker */
+    // clicker.onclick = generate; glitch.com line changed to jquery
+    $("#clicker").click(generate);
+    
+    generate();    
   }
 }
 
@@ -31,4 +83,4 @@ function main() {
 }
 
 // let's get this party started - uncomment me
-//main();
+main();
