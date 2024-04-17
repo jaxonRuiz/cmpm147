@@ -21,9 +21,17 @@
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.9.2/lib/p5.js"></script>
 
 	<!-- Link to javascript files - DEFER waits until all elements are rendered -->
-    <script type="text/javascript" src="../js/site.js" DEFER></script>
-	<!-- Use me for a JavaScript OOP Project -->
-	<script type="text/javascript" src="./js/project.js" DEFER></script>
+	<script type="text/javascript" src="./js/objects/gradient.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/river.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/static_overlay.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/background.js" DEFER></script>
+	<script type="text/javascript" src="./js/objects/building.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/buildings01.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/buildings02.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/buildings03.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/buildings04.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/foreground.js" DEFER></script>
+	<script type="text/javascript" src="./js/layers/street.js" DEFER></script>
 	<!-- Use me for a p5.js project -->
 	<script type="text/javascript" src="./js/sketch.js" DEFER></script>
 </head>
@@ -38,6 +46,7 @@
 				<div id="canvas-container">
 					<!-- canvas will be added here -->
 				</div>
+				<div id="refresh"></div>
                 <div class="fullscreen-box">
                     <button id="fullscreen">Fullscreen</button>
                 </div>
@@ -45,17 +54,19 @@
 
 			<div class="minor-section">
 				<h2>Description</h2>
-				<p>What are you trying to acomplish with this experiment?</p>
+				<p>I worked with Cole to try to make a cyperpunk style cityscape. </p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Technical</h2>
-				<p>Describe in detail what you did technically and how it works?</p>
+				<p>For the buildings we used custom shapes and some trigonomotry to get the angle of the buildings. We didn't manage to get the varied building angles to work in the end, but I want to come back and fix it at some point, when I have more time
+					We organized the scene into layers using a custom LayerManager class to be able to organize the multiple layers we ultimately used.
+				</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
-				<p>Each person that worked on the code should reflect on the process, the difficulties, and the successes of the experiment.</p>
+				<p>Both me and Cole were tight on time leading up to this project, and weren't able to work as much as I would have liked, but I'm still quite happy with the final result. Despite some incredibly confusing issues with p5 shapes with classes, as well as the process of transferring from glitch to vscode, we still managed to finish. I was surprised how a few entirely design decisions ended up being found by accident, such as the transparent ground or angle we ended up using for the buildings. </p>
 			</div>
 
 		</section>
