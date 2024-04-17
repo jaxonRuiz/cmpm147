@@ -2,7 +2,7 @@
 class Buildings01 {
     constructor() {
         this.buildings = [];
-        this.numBuildings = random(8, 12);
+        this.numBuildings = random(14, 18);
         // generate the random buildings
         for (let i=0; i<this.numBuildings; i++) {
             // generating positions with amount of randomness
@@ -13,7 +13,7 @@ class Buildings01 {
             x_pos = x_pos * random(0.8, 1.2);
             y_pos = y_pos * random(0.8, 1.2);
 
-            let building = new BuildingV1(x_pos, y_pos, 1, 50, 30, 7, 30);
+            let building = new BuildingV1(x_pos, y_pos, 1, 60, 30, 7, 30);
             this.buildings.push(building);
         }
     }

@@ -53,6 +53,10 @@ function setup() {
 
   let refreshButton = createButton("reimagine");
   refreshButton.parent("refresh");
+  $("#refresh button").click(function() { 
+    LM = new LayerManager();
+    seed++;
+  });
 
   //createButton("reimagine").mousePressed(() => seed++);
   LM = new LayerManager();
@@ -60,11 +64,6 @@ function setup() {
   // Set Framerate
   frameRate(FRAMERATE);
 }
-
-$(document).on('ready', function() {
-  $("#redo").click(function() { console.log('E'); seed++; });
-  console.log($("#redo"));
-});
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
