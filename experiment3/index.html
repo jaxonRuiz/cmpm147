@@ -23,7 +23,13 @@
 	<!-- Link to javascript files - DEFER waits until all elements are rendered -->
     <script type="text/javascript" src="../js/site.js" DEFER></script>
 	<!-- Use me for a JavaScript OOP Project -->
-	<script type="text/javascript" src="./js/project.js" DEFER></script>
+	<!-- <script type="text/javascript" src="./js/project.js" DEFER></script> -->
+	
+
+	<script type="text/javascript" src="./js/tile_generation.js" DEFER></script>
+	<script type="text/javascript" src="./js/autotile.js" DEFER></script>
+	<script type="text/javascript" src="./js/overworld_generation.js" DEFER></script>
+	<script type="text/javascript" src="./js/underground_generation.js" DEFER></script>
 	<!-- Use me for a p5.js project -->
 	<script type="text/javascript" src="./js/sketch.js" DEFER></script>
 </head>
@@ -36,8 +42,23 @@
 
 			<div class="minor-section">
 				<div id="canvas-container">
-					<!-- canvas will be added here -->
+					<button id="reseedButton">
+						reseed
+					  </button>
+					  <span id="seedReport"></span>
+					  <hr />
+					  <span id="outer-container">
+						<span id="canvasContainer" style="margin: 10px;"></span>
+						<span id="asciiBox-container">
+						  <textarea id="asciiBoxTop" class="asciiBox" style="opacity: 0.5; letter-spacing: 1ex; font-family: monospace;"></textarea>
+							<textarea id="asciiBoxBot" class="asciiBox" style="opacity: 0.5; letter-spacing: 1ex; font-family: monospace;"></textarea>	
+						</span>
+					  </span>
+					  
+
+				  
 				</div>
+				<div id="scuffed-padding"></div>
                 <div class="fullscreen-box">
                     <button id="fullscreen">Fullscreen</button>
                 </div>

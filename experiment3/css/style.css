@@ -15,5 +15,38 @@ body {
 
 #canvas-container {
     width: 100%;
+    /*
+    makes fullscreen 
+    as in: 100 (%) 
+    width: 100vw
+    height: 100vh*/
     height: 600px;
+}
+/* #content {
+    width: 100%;
+} */
+
+.asciiBox {
+    resize: none;
+    overflow: hidden;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 12px;
+    padding: 5px;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#asciiBox-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#outer-container {
+    display: flex;
+    flex-direction: row;
+}
+
+#scuffed-padding {
+    height: 60px;
 }
