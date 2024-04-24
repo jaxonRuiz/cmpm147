@@ -16,18 +16,19 @@ function generateBotGrid(numCols, numRows) {
   for (let i=0; i<random(8,18); i++) {
     room_width = floor(random(4, 10));
     room_height = floor(random(4, 10));
-    room_x = floor(random(-numCols, numCols));
-    room_y = floor(random(-numRows, numRows));
+    room_x = floor(random(-numCols/2, numCols));
+    room_y = floor(random(-numRows/2, numRows));
     grid = generateBlankRoom(grid, room_x, room_y, room_width, room_height);
   }
+  // depreciated :(
   // grid = setRoomWalls(grid);
 
   return grid;
 }
 
 function generateBlankRoom(grid, room_x, room_y, room_width, room_height) {
-  liveX = floor(map(mouseX, 0, width, -5, 5));
-  liveY = floor(map(mouseY, 0, height, -5, 5));
+  liveX = floor(map(mouseX, 0, width, -10, 25));
+  liveY = floor(map(mouseY, 0, height, 0, 5));
   for (let i = room_y; i<room_y+room_height; i++) {
     for (let j = room_x; j<room_x+room_width; j++) {
       newX = liveX + j;
