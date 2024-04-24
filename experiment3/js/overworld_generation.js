@@ -87,7 +87,7 @@ function drawTopGrid(grid) {
       }
     }
   }
-  //autotileFillin(grid, tile_dirt, tile_grass, 0, 4);
-  //autotileFillin(grid, tile_water, tile_dirt, 3, 9);
+  autotileFillin(grid, tile_dirt, tile_grass, 0, 4);
+  autotileFillin(grid, tile_water, tile_dirt, 3, 9);
   
 }
