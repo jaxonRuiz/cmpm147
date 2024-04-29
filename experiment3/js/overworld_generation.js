@@ -20,26 +20,26 @@ function generateTopGrid(numCols, numRows) {
     return grid;
   }
 
-function applyNoise(i, j, scale = 0.1) {
-  v = noise((liveY + i)*scale, (liveX + j)*scale);
-  //tile_type = "water";
-  if(v < 0.3){
-    //water
-    return tile_water;
-  }
-  else if(v < 0.4){
-    //sand
-    return tile_dirt;
-  }
-  else if(v <0.7){
-    //grass
-    return tile_grass
-  }
-  else{
-    //forest
-    return tile_forest;
-  }
-}
+// function applyNoise(i, j, scale = 0.1) {
+//   v = noise((liveY + i)*scale, (liveX + j)*scale);
+//   //tile_type = "water";
+//   if(v < 0.3){
+//     //water
+//     return tile_water;
+//   }
+//   else if(v < 0.4){
+//     //sand
+//     return tile_dirt;
+//   }
+//   else if(v <0.7){
+//     //grass
+//     return tile_grass
+//   }
+//   else{
+//     //forest
+//     return tile_forest;
+//   }
+// }
 
 
 function applyNoise(i, j, scale = 0.1) {
