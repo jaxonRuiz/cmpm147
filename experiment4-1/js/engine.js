@@ -66,7 +66,7 @@ function setupEngine() {
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent("canvas-container");
 
-  camera_offset = new p5.Vector(-width / 2, height / 2);
+  camera_offset = new p5.Vector(-width / 2, (height / 2));
   camera_velocity = new p5.Vector(0, 0);
 
   if (window.p3_setup) {
@@ -83,8 +83,7 @@ function setupEngine() {
     rebuildWorld(input.value());
   });
 
-  createP("Arrow keys scroll. Click to reveal tiles, match as many as you can!").parent("canvas-container");
-  createP("Use shift to spend 1 point/second to temporarily reveal all tiles on the screen").parent("canvas-container");
+  createP("Arrow keys scroll. Shapes change based on your mouse").parent("canvas-container");
   
   
   rebuildWorld(input.value());
@@ -97,7 +96,7 @@ function rebuildWorld(key) {
   tile_width_step_main = window.p3_tileWidth ? window.p3_tileWidth() : 32;
   tile_height_step_main = window.p3_tileHeight ? window.p3_tileHeight() : 14.5;
   tile_columns = Math.ceil(width / (tile_width_step_main * 2));
-  tile_rows = Math.ceil(height / (tile_height_step_main * 2));
+  tile_rows = Math.ceil(height / (tile_height_step_main * 2))+2;
 }
 
 function mouseClicked() {

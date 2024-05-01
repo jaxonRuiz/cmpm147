@@ -16,9 +16,7 @@
 
 function p3_preload() {}
 
-function p3_setup() {
-  background(255)
-}
+function p3_setup() {}
 
 let worldSeed;
 
@@ -29,7 +27,7 @@ function p3_worldKeyChanged(key) {
 }
 
 function p3_tileWidth() {
-  return 40;
+  return 64;
 }
 function p3_tileHeight() {
   return 32;
@@ -37,284 +35,126 @@ function p3_tileHeight() {
 
 let [tw, th] = [p3_tileWidth(), p3_tileHeight()];
 
-let score = 0;
-let num_misses = 0;
 let clicks = {};
-let clearedTiles = {}
-let selectedTiles = {}
-let openTile1 = {color: undefined, i:undefined, j:undefined}
-let openTile2 = {color: undefined, i:undefined, j:undefined}
-let reveal_tiles = false;
 
 function p3_tileClicked(i, j) {
-  let key = [i, j];  
-  
-  if (reveal_tiles) {
-    return; 
-  }
-  
-  // skip if tile already cleared
-  if (clearedTiles[key] == 1) {
-    return;
-  }
-  
-  selectedTiles[key] = 1 + (selectedTiles[key] | 0);
-  let st = (selectedTiles[key] | 0);
-  
-  
-  if (st%2 == 1) { // if tile is now selected
-    // get color of selected tile
-    let hash = XXH.h32("tile:" + [i, j], worldSeed);
-    colorMode(HSB, 360, 100, 100);
-    let selectedColor = map(hash%10, 0, 12, 0, 360)
-      
-    
-    if (openTile1.color == undefined) {// if no tile is currently selected
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    } else if (openTile2.color == undefined) { // if only 1 tile is selected
-      
-      Object.assign(openTile2, openTile1);
-      
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    } else { // 2 tiles already selected
-      
-      // deselect oldest tile
-      let deselectedKey = [openTile2.i, openTile2.j];
-      selectedTiles[deselectedKey] = 1 + (selectedTiles[deselectedKey] | 0);
-      
-      // overwrite openTile2 with openTile1
-      Object.assign(openTile2, openTile1)
-      
-      // saving new tile info
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    }
-    
-    // if matching pair found
-    if (openTile1.color == openTile2.color) {
-      let tile1key = [openTile1.i, openTile1.j];
-      let tile2key = [openTile2.i, openTile2.j];
-      
-      score++;
-      // maybe screen effect
-      clearedTiles[tile1key] = 1;
-      clearedTiles[tile2key] = 1;
-      
-      // deselecting both tiles
-      openTile1.color = undefined;
-      openTile1.i = undefined;
-      openTile1.j = undefined;
-      openTile2.color = undefined;
-      openTile2.i = undefined;
-      openTile2.j = undefined;
-      
-      selectedTiles[tile1key]++;
-      selectedTiles[tile2key]++;
-    } else {
-      if (openTile1.color != undefined && openTile2.color != undefined) {
-        num_misses++;          
-      }
-    }
-    
-    
-    colorMode(RGB);
-  } else { // when a tile is deselected
-    if (openTile1.i == i && openTile1.j == j) {
-      // clear openTile1
-      if (openTile2.color == undefined) {
-        openTile1.color = undefined;
-        openTile1.i = undefined;
-        openTile1.j = undefined;
-      } else {
-        // reassign tile2 to tile 1
-        Object.assign(openTile1, openTile2);
-        // clearing openTile2
-        openTile2.color = undefined;
-        openTile2.i = undefined;
-        openTile2.j = undefined;
-      }
-    } else if (openTile2.i == i && openTile2.j == j) {
-      
-      openTile2.color = undefined;
-      openTile2.i = undefined;
-      openTile2.j = undefined;
-    } else {
-      console.log("!!! error deselecting colors");
-    }
-  }
-  // console.log("openTile1", openTile1);
-  // console.log("openTile2", openTile2);
-  // console.log("selectedTiles", selectedTiles);
+  let key = [i, j];
+  clicks[key] = 1 + (clicks[key] | 0);
 }
-let timer;
 
 function p3_drawBefore() {
-  // shift key to reveal
-  if (keyIsDown(16)) { 
-    if (!reveal_tiles) {
-      score--;
-      timer = millis();
-    }
-    if (timer+1100 < millis()) { // technically get 1.1 second, but it felt better
-      score--;
-      timer = millis();
-    }
-    reveal_tiles = true;
-  } else {
-    reveal_tiles = false;
-  }
+  let bg_color = color(255, 40, 60)
+  background(bg_color)
 }
 
-function p3_drawTile(i, j, selected=false) {
-  // noStroke();
-  push();
-  let hash = XXH.h32("tile:" + [i, j], worldSeed);
-  colorMode(HSB, 360, 100, 100);
-  
-  let noiseScaler = 1
-  let hue = map(hash%10, 0, 12, 0, 360);
-  let v = noise(i*noiseScaler, j*noiseScaler);
-  let backHue = abs(i+(j+10))*20%360 //map(v, 0, 1, 0, 360);
-  
-  let st = selectedTiles[[i, j]] | 0;
-  let ct = clearedTiles[[i, j]] | 0;
-  
-  // draw selected tiles
-  if (st % 2 == 1) {
-    fill(hue, 100, 100);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-    
-    fill(hue, 70, 70);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
-    
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
-  }
-  // draw cleared tiles
-  else if (ct % 2 == 1) {
-    fill(hue, 10, 10);
-    noStroke();
-    ellipse(0, th, tw, th/2);
-    translate(0, -10);
-    stroke(0);
-    fill(hue, 100, 100);
-    ellipse(0, th, tw, th);
-  }
-  else if (reveal_tiles) {
-    fill(hue, 70, 80);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-    
-    fill(hue, 65, 50);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
-    
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
-  }
-  else {
-    // draw unopened tile
-    fill(backHue, 30, 50);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
+// logic for drawing each individual tile
+function p3_drawTile(i, j, cy, cx) {
+  noStroke();
 
-    fill(backHue, 50, 20);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
-    
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
+  let clickVal = (clicks[i, j] | 0);
+  let hash = XXH.h32("tile:" + [i, j] + clickVal, worldSeed)
+  if (hash % 4 == 0) {
+    fill(20);
+  } else {
+    fill(20);
   }
-  colorMode(RGB);
+
+  push();
+
+  // tile
+  beginShape();
+  vertex(-tw, 0);
+  vertex(0, th);
+  vertex(tw, 0);
+  vertex(0, -th);
+  endShape(CLOSE);
+  
+  let alpha = 255;
+  
+  // if has been clicked
+  let n = clicks[[i, j]] | 0;
+  if (n % 2 == 1) {
+    alpha = 100;
+  }
+  
+  colorMode(HSB, 360, 100, 100, 255);
+  let baseHue = hashedRandom(hash, 300, 360) //328;
+  let baseSaturation = 61.2;
+  let baseValue = 94.9;
+  
+  
+  // building
+  let bh;
+  let baseHeight = hashedRandom(hash, 100, 150);
+  let offset = 3//th/hashedRandom(hash, 2,4);
+  let rightColor = color(baseHue, 61.2, 83.9)  //(214, 83, 153, alpha);
+  let leftColor = color(baseHue-81, 64.6, 32.2)  //(35, 29, 82, alpha);
+  let topColor = color(abs(baseHue-325), 53.7, 94.9)  //(242, 119, 122, alpha);
+  // let rightColor = color(328, 61.2, 83.9, alpha)  //(214, 83, 153, alpha);
+  // let leftColor = color(247, 64.6, 32.2, alpha)  //(35, 29, 82, alpha);
+  // let topColor = color(3, 53.7, 94.9)  //(242, 119, 122, alpha);
+  
+  let distanceFromMouse = sqrt(sq(mouseX-cy) + sq(mouseY-cx));
+  let mouseAdjust = map(distanceFromMouse, 0, sqrt(sq(width) + sq(height)), 2, 0.4)
+  bh = baseHeight*mouseAdjust;
+  
+  let heightAdjust = map(mouseY-cx, 0, height, 1.2, 0.8);
+  let widthAdjust = map(mouseX-cy, 0, width, 1.3, 0.7);
+  
+
+  let newWidth = tw * heightAdjust
+  let newHeight = th * heightAdjust
+  
+  
+  // left face
+  fill(leftColor);
+  beginShape();
+  vertex(0, newHeight-offset); // 1
+  vertex(0, newHeight-offset-bh); // 2
+  vertex(-newWidth+2*offset, -bh); // 3
+  vertex(-newWidth+2*offset, 0) // 7
+  endShape();
+  
+  // right face
+  fill(rightColor);
+  beginShape();
+  vertex(0, newHeight-offset); // 1
+  vertex(0, newHeight-offset-bh); // 2
+  vertex(newWidth-2*offset, -bh); // 5
+  vertex(newWidth-2*offset, 0); // 6
+  endShape();
+  
+  // top face;
+  fill(topColor);
+  beginShape();
+  vertex(0, newHeight-offset-bh); // 2
+  vertex(-newWidth+2*offset, -bh); // 3
+  vertex(0, -bh-newHeight+offset); // 4
+  vertex(newWidth-2*offset, -bh) // 5
+  endShape();
+
+
   pop();
 }
 
+
+// tile that mouse is hovering over
 function p3_drawSelectedTile(i, j) {
-  push();
-  key = [i, j]
-  if (clearedTiles[key] == 1) {
-    // decided it didnt look super good
-    // noFill();
-    // stroke(255);
-    // strokeWeight(4);
-    // translate(0, -10);
-    // ellipse(0, th, tw, th);
-  } else {
-    stroke(255);
-    strokeWeight(4)
-    noFill()
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-  }
-  pop();
+  noFill();
+//   stroke(0, 255, 0, 128);
 
-  //p3_drawTile(i, j, true)
-  
-  
-  // noStroke();
-  // fill(255, 0 ,0);
-  // text("tile " + [i, j], 0, 0);
+//   beginShape();
+//   vertex(-tw, 0);
+//   vertex(0, th);
+//   vertex(tw, 0);
+//   vertex(0, -th);
+//   endShape(CLOSE);
+
+//   noStroke();
+//   fill(0);
+//   text("tile " + [i, j], 0, 0);
 }
 
 function p3_drawAfter() {
-  push();
-  fill(255);
-  stroke(255);
-  textSize(40);
-  text("Score: " + score, 0, 30);
-  text("Misses: " + num_misses, 0, 70);
-  pop();
+
 }

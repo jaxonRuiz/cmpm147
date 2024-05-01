@@ -14,10 +14,12 @@
     p3_drawAfter
 */
 
-function p3_preload() {}
+function p3_preload() {
+  
+}
 
 function p3_setup() {
-  background(255)
+  
 }
 
 let worldSeed;
@@ -29,292 +31,142 @@ function p3_worldKeyChanged(key) {
 }
 
 function p3_tileWidth() {
-  return 40;
+  return 32;
 }
 function p3_tileHeight() {
-  return 32;
+  return 20;
 }
 
 let [tw, th] = [p3_tileWidth(), p3_tileHeight()];
 
-let score = 0;
-let num_misses = 0;
 let clicks = {};
-let clearedTiles = {}
-let selectedTiles = {}
-let openTile1 = {color: undefined, i:undefined, j:undefined}
-let openTile2 = {color: undefined, i:undefined, j:undefined}
-let reveal_tiles = false;
+let numClicks = 0;
 
 function p3_tileClicked(i, j) {
-  let key = [i, j];  
-  
-  if (reveal_tiles) {
-    return; 
-  }
-  
-  // skip if tile already cleared
-  if (clearedTiles[key] == 1) {
-    return;
-  }
-  
-  selectedTiles[key] = 1 + (selectedTiles[key] | 0);
-  let st = (selectedTiles[key] | 0);
-  
-  
-  if (st%2 == 1) { // if tile is now selected
-    // get color of selected tile
-    let hash = XXH.h32("tile:" + [i, j], worldSeed);
-    colorMode(HSB, 360, 100, 100);
-    let selectedColor = map(hash%10, 0, 12, 0, 360)
-      
-    
-    if (openTile1.color == undefined) {// if no tile is currently selected
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    } else if (openTile2.color == undefined) { // if only 1 tile is selected
-      
-      Object.assign(openTile2, openTile1);
-      
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    } else { // 2 tiles already selected
-      
-      // deselect oldest tile
-      let deselectedKey = [openTile2.i, openTile2.j];
-      selectedTiles[deselectedKey] = 1 + (selectedTiles[deselectedKey] | 0);
-      
-      // overwrite openTile2 with openTile1
-      Object.assign(openTile2, openTile1)
-      
-      // saving new tile info
-      openTile1.color = selectedColor;
-      openTile1.i = i;
-      openTile1.j = j;
-    }
-    
-    // if matching pair found
-    if (openTile1.color == openTile2.color) {
-      let tile1key = [openTile1.i, openTile1.j];
-      let tile2key = [openTile2.i, openTile2.j];
-      
-      score++;
-      // maybe screen effect
-      clearedTiles[tile1key] = 1;
-      clearedTiles[tile2key] = 1;
-      
-      // deselecting both tiles
-      openTile1.color = undefined;
-      openTile1.i = undefined;
-      openTile1.j = undefined;
-      openTile2.color = undefined;
-      openTile2.i = undefined;
-      openTile2.j = undefined;
-      
-      selectedTiles[tile1key]++;
-      selectedTiles[tile2key]++;
-    } else {
-      if (openTile1.color != undefined && openTile2.color != undefined) {
-        num_misses++;          
-      }
-    }
-    
-    
-    colorMode(RGB);
-  } else { // when a tile is deselected
-    if (openTile1.i == i && openTile1.j == j) {
-      // clear openTile1
-      if (openTile2.color == undefined) {
-        openTile1.color = undefined;
-        openTile1.i = undefined;
-        openTile1.j = undefined;
-      } else {
-        // reassign tile2 to tile 1
-        Object.assign(openTile1, openTile2);
-        // clearing openTile2
-        openTile2.color = undefined;
-        openTile2.i = undefined;
-        openTile2.j = undefined;
-      }
-    } else if (openTile2.i == i && openTile2.j == j) {
-      
-      openTile2.color = undefined;
-      openTile2.i = undefined;
-      openTile2.j = undefined;
-    } else {
-      console.log("!!! error deselecting colors");
-    }
-  }
-  // console.log("openTile1", openTile1);
-  // console.log("openTile2", openTile2);
-  // console.log("selectedTiles", selectedTiles);
-}
-let timer;
-
-function p3_drawBefore() {
-  // shift key to reveal
-  if (keyIsDown(16)) { 
-    if (!reveal_tiles) {
-      score--;
-      timer = millis();
-    }
-    if (timer+1100 < millis()) { // technically get 1.1 second, but it felt better
-      score--;
-      timer = millis();
-    }
-    reveal_tiles = true;
-  } else {
-    reveal_tiles = false;
-  }
+  let key = [i, j];
+  clicks[key] = 1 + (clicks[key] | 0);
+  numClicks++;
 }
 
-function p3_drawTile(i, j, selected=false) {
-  // noStroke();
+function p3_drawBefore() {}
+
+function p3_drawTile(i, j, cy, cx) {
+  //noStroke();
+  
+  let hash = XXH.h32("tile:" + [i, j], worldSeed)
+  // if (hash % 4 == 0) {
+  //   fill(240, 200);
+  // } else {
+  //   fill(255, 200);
+  // }
   push();
-  let hash = XXH.h32("tile:" + [i, j], worldSeed);
-  colorMode(HSB, 360, 100, 100);
   
-  let noiseScaler = 1
-  let hue = map(hash%10, 0, 12, 0, 360);
-  let v = noise(i*noiseScaler, j*noiseScaler);
-  let backHue = abs(i+(j+10))*20%360 //map(v, 0, 1, 0, 360);
   
-  let st = selectedTiles[[i, j]] | 0;
-  let ct = clearedTiles[[i, j]] | 0;
   
-  // draw selected tiles
-  if (st % 2 == 1) {
-    fill(hue, 100, 100);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-    
-    fill(hue, 70, 70);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
-    
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
-  }
-  // draw cleared tiles
-  else if (ct % 2 == 1) {
-    fill(hue, 10, 10);
-    noStroke();
-    ellipse(0, th, tw, th/2);
-    translate(0, -10);
-    stroke(0);
-    fill(hue, 100, 100);
-    ellipse(0, th, tw, th);
-  }
-  else if (reveal_tiles) {
-    fill(hue, 70, 80);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-    
-    fill(hue, 65, 50);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
-    
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
-  }
-  else {
-    // draw unopened tile
-    fill(backHue, 30, 50);
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
+  // using noise to seed tiles
+  let scale = 0.2;
+  let v = noise(i*scale, j*scale);
+  let blockHeight = floor(map(v, 0, 1, 1, 6)); // int of number of blocks high it is
+  let bh = blockHeight * tw // used to actually draw blocks
+  let depthScaler = map(blockHeight, 1, 6, 0.4, 1.5)
+  let offset = 0// th/hashedRandom(hash, 2,4);
 
-    fill(backHue, 50, 20);
-    // draw volume (left)
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(-tw, tw);
-    endShape(CLOSE);
+  
+  let distanceFromMouse = sqrt(sq(mouseX-cy) + 1.5*sq(mouseY-(cx-bh)));
+  let brightnessAdjust = map(distanceFromMouse, 0, sqrt(sq(width) + sq(height)), 1.2, 0.5)
+  let leftColor = color(101*depthScaler, 71*depthScaler*brightnessAdjust*0.8, 47*depthScaler, alpha);
+  let rightColor = color(156*depthScaler, 112*depthScaler*brightnessAdjust*0.8, 75*depthScaler, alpha);
+  let topColor = color(96*depthScaler, 151*depthScaler*brightnessAdjust*0.9, 58*depthScaler*(1/brightnessAdjust), alpha); 
+  
+  // left face
+  fill(leftColor);
+  beginShape();
+  vertex(0, th-offset); // 1
+  vertex(0, th-offset-bh); // 2
+  vertex(-tw+2*offset, -bh); // 3
+  vertex(-tw+2*offset, 0) // 7
+  endShape();
+  
+  // right face
+  fill(rightColor);
+  beginShape();
+  vertex(0, th-offset); // 1
+  vertex(0, th-offset-bh); // 2
+  vertex(tw-2*offset, -bh); // 5
+  vertex(tw-2*offset, 0); // 6
+  endShape();
+  
+  // top face;
+  fill(topColor);
+  beginShape();
+  vertex(0, th-offset-bh); // 2
+  vertex(-tw+2*offset, -bh); // 3
+  vertex(0, -bh-th+offset); // 4
+  vertex(tw-2*offset, -bh) // 5
+  endShape();
+  
+  //let freqAdjust = map(distanceFromMouse, 0, sqrt(sq(width) + sq(height)), 2.2, -1)
+  // flowers
+  if ((hash+numClicks)%8 < 2){
+    colorMode(HSB, 360, 100, 100);
+    // randomize flower color between warm colors (0, 70) degree hue
+    let flowerColor = hashedRandom(hash, 0, 70);
     
-    // draw volume (right)
-    beginShape();
-    vertex(tw, 0);
-    vertex(0, th);
-    vertex(0, th+tw);
-    vertex(tw, tw);
-    endShape(CLOSE);
+    // changing flower size and scale based on height to simulate perspective
+    let flowerScale = map(blockHeight, 1, 6, 0.6, 1.2);
+    let flowerValue = map(blockHeight, 1, 6, 30, 100)
+    
+    // randomize flower position
+    let flowerX = hashedRandom(hash, -tw/2, tw/2);
+    let flowerY = hashedRandom(hash, -th/2, th/2);
+    
+    // draw flower
+    fill(flowerColor, 80, flowerValue);
+    ellipse(flowerX, -flowerY-bh, 10*flowerScale, 5*flowerScale);
+    colorMode(RGB);
   }
-  colorMode(RGB);
+  
+  
+
+  // beginShape();
+  // vertex(-tw, 0);
+  // vertex(0, th);
+  // vertex(tw, 0);
+  // vertex(0, -th);
+  // endShape(CLOSE);
+
+  let n = clicks[[i, j]] | 0;
+  if (n % 2 == 1) {
+    fill(0, 0, 0, 32);
+    ellipse(0, 0, 10, 5);
+    translate(0, -10);
+    fill(255, 255, 100, 128);
+    ellipse(0, 0, 10, 10);
+  }
+
   pop();
 }
 
 function p3_drawSelectedTile(i, j) {
-  push();
-  key = [i, j]
-  if (clearedTiles[key] == 1) {
-    // decided it didnt look super good
-    // noFill();
-    // stroke(255);
-    // strokeWeight(4);
-    // translate(0, -10);
-    // ellipse(0, th, tw, th);
-  } else {
-    stroke(255);
-    strokeWeight(4)
-    noFill()
-    beginShape();
-    vertex(-tw, 0);
-    vertex(0, th);
-    vertex(tw, 0);
-    vertex(0, -th);
-    endShape(CLOSE);
-  }
-  pop();
+  noFill();
+//   stroke(0, 255, 0, 128);
 
-  //p3_drawTile(i, j, true)
-  
-  
-  // noStroke();
-  // fill(255, 0 ,0);
-  // text("tile " + [i, j], 0, 0);
+//   beginShape();
+//   vertex(-tw, 0);
+//   vertex(0, th);
+//   vertex(tw, 0);
+//   vertex(0, -th);
+//   endShape(CLOSE);
+
+//   noStroke();
+//   fill(0);
+//   text("tile " + [i, j], 0, 0);
 }
 
 function p3_drawAfter() {
-  push();
-  fill(255);
-  stroke(255);
-  textSize(40);
-  text("Score: " + score, 0, 30);
-  text("Misses: " + num_misses, 0, 70);
-  pop();
+  // colorMode(HSB, 360, 100, 100, 100);
+  
+  //let distanceFromMouse = sqrt(sq(mouseX-cy) + 1.5*sq(mouseY-cx));
+  
+  
 }
