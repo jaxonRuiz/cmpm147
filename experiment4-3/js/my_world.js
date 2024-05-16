@@ -65,7 +65,8 @@ function p3_drawTile(i, j, cy, cx) {
   
   // using noise to seed tiles
   let scale = 0.2;
-  let v = noise(i*scale, j*scale);
+  let v = noise((1000+i)*scale, abs(1000+j)*scale);
+  v += noise(i*scale, j*scale)/10;
   let blockHeight = floor(map(v, 0, 1, 1, 6)); // int of number of blocks high it is
   let bh = blockHeight * tw // used to actually draw blocks
   let depthScaler = map(blockHeight, 1, 6, 0.4, 1.5)
