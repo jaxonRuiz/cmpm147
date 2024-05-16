@@ -45,6 +45,7 @@ let selectedTiles = {}
 let openTile1 = {color: undefined, i:undefined, j:undefined}
 let openTile2 = {color: undefined, i:undefined, j:undefined}
 let reveal_tiles = false;
+let waveOffset = 0;
 
 function p3_tileClicked(i, j) {
   let key = [i, j];  
@@ -66,7 +67,7 @@ function p3_tileClicked(i, j) {
     // get color of selected tile
     let hash = XXH.h32("tile:" + [i, j], worldSeed);
     colorMode(HSB, 360, 100, 100);
-    let selectedColor = map(hash%10, 0, 12, 0, 360)
+    let selectedColor = getHue(i, j);
       
     
     if (openTile1.color == undefined) {// if no tile is currently selected
@@ -170,6 +171,29 @@ function p3_drawBefore() {
   }
 }
 
+let testRand = {};
+
+function getHue(i, j) {
+  let hash = XXH.h32("tile:" + [i, j], worldSeed);
+  let hue = map(hash%12, 0, 12, 0, 360);
+
+  // manually reshuffling hues 150 and 90, which both look WAY too similar to 120
+  if (hue == 150) {
+    let hueOffset = floor(hashedRandom(hash +abs(i*j), -1, 10)) * 30;
+    if (hueOffset == 0) hueOffset = -30;
+    hue = hue + hueOffset;
+    if (hue >=360) hue -=360;
+  }
+  if (hue == 90) {
+    let hueOffset = floor(hashedRandom(hash +abs(i*j), -1, 10)) * 30;
+    if (hueOffset == 0) hueOffset = -30;
+    hue = hue - hueOffset;
+    if (hue < 0) hue += 360;
+  }
+
+  return hue;
+}
+
 function p3_drawTile(i, j, selected=false) {
   // noStroke();
   push();
@@ -177,9 +201,13 @@ function p3_drawTile(i, j, selected=false) {
   colorMode(HSB, 360, 100, 100);
   
   let noiseScaler = 1
-  let hue = map(hash%10, 0, 12, 0, 360);
+  let hue = getHue(i, j);
+
+  // let backAngleX = frameCount * 0.007 //map(noise(0.007 * frameCount), 0, 1, -1, 1);
+  // let backAngleY = frameCount * 0.005 //map(noise(0.002 * frameCount + 5000), 0, 1, -1, 1);
+
   let v = noise(i*noiseScaler, j*noiseScaler);
-  let backHue = abs(i+(j+10))*20%360 //map(v, 0, 1, 0, 360);
+  let backHue = abs((i*4)+(j))*10%360 //map(v, 0, 1, 0, 360);
   
   let st = selectedTiles[[i, j]] | 0;
   let ct = clearedTiles[[i, j]] | 0;
@@ -304,8 +332,15 @@ function p3_drawSelectedTile(i, j) {
   //p3_drawTile(i, j, true)
   
   
-  // noStroke();
-  // fill(255, 0 ,0);
+  //noStroke();
+  stroke(0);
+  strokeWeight(5)
+  fill(255);
+
+  let hue = getHue(i, j);
+  textSize(18);
+  text("hue " + hue, 0, 0);
+
   // text("tile " + [i, j], 0, 0);
 }
 
