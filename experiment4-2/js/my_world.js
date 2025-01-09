@@ -329,18 +329,17 @@ function p3_drawSelectedTile(i, j) {
   }
   pop();
 
-  //p3_drawTile(i, j, true)
-  
-  
-  //noStroke();
+  //p3_drawTile(i, j, true)  
   stroke(0);
   strokeWeight(5)
   fill(255);
 
+  // debug tile color
   let hue = getHue(i, j);
   textSize(18);
   text("hue " + hue, 0, 0);
 
+  // debug tile position
   // text("tile " + [i, j], 0, 0);
 }
 
