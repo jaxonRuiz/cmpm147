@@ -335,9 +335,9 @@ function p3_drawSelectedTile(i, j) {
   fill(255);
 
   // debug tile color
-  let hue = getHue(i, j);
-  textSize(18);
-  text("hue " + hue, 0, 0);
+  // let hue = getHue(i, j);
+  // textSize(18);
+  // text("hue " + hue, 0, 0);
 
   // debug tile position
   // text("tile " + [i, j], 0, 0);
